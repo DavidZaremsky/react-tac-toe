@@ -1,50 +1,17 @@
 import React from 'react';
-import { Board } from '../board/index.jsx';
+import Board from '../board/index.jsx';
 import { connect } from 'react-redux';
-import { setXIsNext, setStepNumber } from '../../redux/game/actions';
-
-// import { calculateWinner } from './index';
-//const store = createStore(combineReducers)
-//export default store;
-
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
-}
+import { setXIsNext, setStepNumber, setHistory } from '../../redux/game/actions';
+import { calculateWinner } from './helpers';
 
 class Game extends React.Component {
-  //consturctor will not be needed once squares is removed
   constructor(props) {
     super(props);
-    this.state = {
-      history: [
-        {
-          squares: Array(9).fill(null)
-        }
-      ]
-      //stepNumber: 0,
-      //xIsNext: true
-    };
   }
   handleClick(i) {
-    const { setXIsNext, xIsNext, setStepNumber, stepNumber } = this.props;
-    const history = this.state.history.slice(0, stepNumber + 1);
-    const current = history[history.length - 1];
+    const { setXIsNext, xIsNext, setStepNumber, stepNumber, setHistory, history } = this.props;
+    const tempHistory = history.slice(0, stepNumber + 1);
+    const current = tempHistory[tempHistory.length - 1];
     const squares = current.squares.slice();
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -52,24 +19,21 @@ class Game extends React.Component {
     setXIsNext(!xIsNext);
     setStepNumber(stepNumber + 1);
     squares[i] = xIsNext ? "X" : "O";
-    this.setState({
-      history: history.concat([
+    setHistory(
+      tempHistory.concat([
         {
           squares: squares
         }
-      ]),
-      stepNumber: history.length,
-    });
+      ])
+    );
   }
   jumpTo(step) {
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0
-    });
+    const { setStepNumber, setXIsNext } = this.props;
+    setStepNumber(step)
+    setXIsNext((step % 2) === 0)
   }
   render() {
-    const { xIsNext, stepNumber } = this.props;
-    const history = this.state.history;
+    const { xIsNext, stepNumber, history } = this.props;
     const current = history[stepNumber];
     const winner = calculateWinner(current.squares);
     const moves = history.map((step, move) => {
@@ -102,14 +66,16 @@ class Game extends React.Component {
 const mapStateToProps = (state) => (
   {
     xIsNext: state.game.xIsNext,
-    stepNumber: state.game.stepNumber
+    stepNumber: state.game.stepNumber,
+    history: state.game.history
   }
 );
 
 const mapDispatchToProps = (dispatch) => (
   {
     setXIsNext: action => dispatch(setXIsNext(action)),
-    setStepNumber: action => dispatch(setStepNumber(action))
+    setStepNumber: action => dispatch(setStepNumber(action)),
+    setHistory: action => dispatch(setHistory(action))
   }
 );
 
