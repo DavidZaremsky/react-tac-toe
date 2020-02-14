@@ -1,13 +1,12 @@
-## REACT - TAC - TOE
-Tic, Tac, Toe made from React
+## React - Tac - Toe
+A Tic, Tac, Toe game made in React
 
-## To Run
+## How to Play
 1. Clone the repository
 1. Run 'npm install'
 1. Run 'npm start'
 1. Go to https://localhost:3000
 
-## To Win
-To win Tic Tac Toe, you need to get three in a row.
-Once a player wins the application shows the winner and freezes the board.
+## How to Win
+[To win Tic Tac Toe, you need to get three in a row.](https://en.wikipedia.org/wiki/Tic-tac-toe#Strategy)
 Refresh the page to play again.
