@@ -14,9 +14,9 @@ export const setStepNumber = value => dispatch => {
   });
 }
 
-export const setSquares = value => dispatch => {
+export const setHistory = history => dispatch => {
   dispatch({
-    types: types.SET_SQUARES,
-    value
+    type: types.SET_HISTORY,
+    history
   });
 }
