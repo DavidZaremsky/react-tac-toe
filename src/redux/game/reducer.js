@@ -21,7 +21,6 @@ export default (state = INITIAL_STATE, action = {}) => {
         stepNumber: action.value
       })
     case types.SET_HISTORY:
-      console.log('setHistory');
       return Object.assign({}, state, {
         history: action.history
       });
