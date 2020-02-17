@@ -3,6 +3,8 @@ import Board from '../board/index.jsx';
 import { connect } from 'react-redux';
 import { setXIsNext, setStepNumber, setHistory } from '../../redux/game/actions';
 import { calculateWinner } from './helpers';
+import Button from '@material-ui/core/Button';
+
 
 const Game = props => {
   const handleClick = i => {
@@ -37,7 +39,12 @@ const Game = props => {
       'Go to move #' + move :
       'Go to game start';
     return (<li key={move}>
-      <button onClick={() => jumpTo(move)}>{desc}</button>
+      <Button
+        variant="outlined"
+        size="small"
+        onClick={() => jumpTo(move)}>
+        {desc}
+      </Button>
     </li>);
   });
   let status;
