@@ -7,7 +7,7 @@ const INITIAL_STATE = {
     }
   ],
   stepNumber: 0,
-  xIsNext: (Math.floor(Math.random() * 2) === 0) ? 1 : 0
+  xIsNext: (Math.floor(Math.random() * 2) === 0)
 }
 
 export default (state = INITIAL_STATE, action = {}) => {
