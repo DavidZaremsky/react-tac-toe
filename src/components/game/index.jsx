@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Board from '../board/index.jsx';
 import { connect } from 'react-redux';
 import { setXIsNext, setStepNumber, setHistory } from '../../redux/game/actions';
 import { calculateWinner } from './helpers';
 import Button from '@material-ui/core/Button';
+import { Grid, Typography, List, Collapse, ListItem, ListItemText } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { ExpandLess, ExpandMore } from '@material-ui/icons'
+import styles from './styles';
 
+const useStyles = makeStyles(styles);
 
 const Game = props => {
+  const classes = useStyles();
   const handleClick = i => {
     const { setXIsNext, xIsNext, setStepNumber, stepNumber, setHistory, history } = props;
     const tempHistory = history.slice(0, stepNumber + 1);
@@ -26,6 +32,10 @@ const Game = props => {
       ])
     );
   }
+  const [open, setOpen] = React.useState(true);
+  const handleHistoryClick = () =>{
+    setOpen(!open);
+  };
   const jumpTo = step => {
     const { setStepNumber, setXIsNext } = props;
     setStepNumber(step)
@@ -36,12 +46,13 @@ const Game = props => {
   const winner = calculateWinner(current.squares);
   const moves = history.map((step, move) => {
     const desc = move ?
-      'Go to move #' + move :
-      'Go to game start';
+      'Go to move ' + move :
+      'Game Start';
     return (<li key={move}>
       <Button
         variant="outlined"
         size="small"
+        fullWidth="true"
         onClick={() => jumpTo(move)}>
         {desc}
       </Button>
@@ -49,20 +60,40 @@ const Game = props => {
   });
   let status;
   if (winner) {
-    status = "Winner: " + winner;
+    status = winner + " Wins!";
   }
   else {
-    status = "Next player: " + (xIsNext ? "X" : "O");
+    status = (xIsNext ? "X" : "O") + "'s Turn";
   }
-  return (<div className="game">
-    <div className="game-board">
-      <Board squares={current.squares} onClick={i => handleClick(i)} />
-    </div>
-    <div className="game-info">
-      <div>{status}</div>
-      <ol>{moves}</ol>
-    </div>
-  </div>);
+  return (
+  <Fragment>
+  <Grid container spacing={3} 
+  direction='column'
+  alignItems="center"
+  justify="flex-start"
+  >
+    <Grid item xs={12}>
+      <Typography variant={'h4'}>
+        {status}
+      </Typography>
+    </Grid>
+      <Grid item xs={12}>
+        <Board squares={current.squares} onClick={i => handleClick(i)} />
+      </Grid>
+      <ListItem button onClick={handleHistoryClick}>
+        <ListItemText primary="History" />
+        {open ? <ExpandLess /> : <ExpandMore />}
+      </ListItem>
+      <Collapse in={!open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          <ListItem button className={classes.nested}>
+              {moves}
+          </ListItem>
+        </List>
+      </Collapse>
+    </Grid>
+  </Fragment>
+  );
 }
 
 const mapStateToProps = (state) => (
