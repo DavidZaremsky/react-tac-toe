@@ -48,15 +48,15 @@ const Game = props => {
     const desc = move ?
       'Go to move ' + move :
       'Game Start';
-    return (<li key={move}>
-      <Button
+    return (<List key={move}>
+      <Button className={classes.button}
         variant="outlined"
         size="small"
         fullWidth="true"
         onClick={() => jumpTo(move)}>
         {desc}
       </Button>
-    </li>);
+    </List>);
   });
   let status;
   if (winner) {
@@ -81,14 +81,18 @@ const Game = props => {
         <Board squares={current.squares} onClick={i => handleClick(i)} />
       </Grid>
       <ListItem button onClick={handleHistoryClick}>
-        <ListItemText primary="History" />
+        {open ? <ExpandLess /> : <ExpandMore />}
+        <ListItemText align='center' primary="History" />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItem>
       <Collapse in={!open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <ListItem button className={classes.nested}>
+          <Grid container 
+          direction='column'
+          alignItems="center"
+          justify="flex-start">
               {moves}
-          </ListItem>
+          </Grid>
         </List>
       </Collapse>
     </Grid>

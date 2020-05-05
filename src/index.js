@@ -1,6 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import { Provider } from 'react-redux';
+import theme from './theme';
 import { createStore } from 'redux';
 import { combineReducers } from 'redux';
 import './index.css';
@@ -9,8 +11,10 @@ import configureStore from './store/configureStore';
 // ========================================
 
 
-ReactDOM.render(
+render(
+  <MuiThemeProvider theme={theme}>
   <Provider store={configureStore()}>
     <Game />
-  </Provider>,
+  </Provider>
+  </MuiThemeProvider>,
   document.getElementById("root"));
