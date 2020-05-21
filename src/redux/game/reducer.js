@@ -3,6 +3,7 @@ import * as types from "./types";
 const INITIAL_STATE = {
   history: [
     {
+      // squares: ["O", "X", "O", "X", "O", null, "X", "O", null],
       squares: Array(9).fill(null),
     },
   ],
