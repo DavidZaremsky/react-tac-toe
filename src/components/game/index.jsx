@@ -1,11 +1,10 @@
 import React, { Fragment } from "react";
 import Board from "../board/index.jsx";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import {
   setXIsNext,
   setStepNumber,
   setHistory,
-  setStatus,
 } from "../../redux/game/actions";
 import { calculateWinner } from "./helpers";
 import Button from "@material-ui/core/Button";
@@ -20,52 +19,47 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import styles from "./styles";
-import { useEffect } from "react";
 
 const useStyles = makeStyles(styles);
 
 const Game = (props) => {
-  // const { setStatus, status } = React.useState("Welcome to React Tac Toe!");
-  let statusBackup = React.useState();
-
+  let currentStatus = React.useState();
   const classes = useStyles();
   const handleClick = (i) => {
-    const {
-      setXIsNext,
-      xIsNext,
-      setStepNumber,
-      stepNumber,
-      setHistory,
-      history,
-    } = props;
+    const { stepNumber, history } = props;
     const tempHistory = history.slice(0, stepNumber + 1);
-    console.log(tempHistory);
     const current = tempHistory[tempHistory.length - 1];
     const squares = current.squares.slice();
-    console.log(history);
+    const winner = calculateWinner(current.squares);
 
-    let tieGame;
-    // If Square is Full, Do Nothing
+    switch (calculateWinner(current.squares)) {
+      case "X":
+        console.log("X wins");
+        break;
+      case "O":
+        console.log("O Wins!");
+        break;
+      case "Draw":
+        console.log("It's a Draw");
+        break;
+      default:
+    }
+
+    if (winner) {
+      return;
+    }
+
+    // if square is full, alert 'Square is Taken', end
+    // if square is empty, continue
     if (squares[i]) {
-      alert("Sorry Buster, That Square is Taken");
-      return;
-    }
-
-    // If Winner is Found
-    if (calculateWinner(squares)) {
-      return;
-    }
-
-    // If All Squares Are Full
-    if (tempHistory.length === 9) {
-      alert("It's a Tie!");
+      console.log("Sorry Buster, That Square is Taken");
       return;
     }
 
     turnHandler(i);
   };
 
-  function turnHandler(turn, tieGame) {
+  function turnHandler(turn) {
     const {
       setXIsNext,
       xIsNext,
@@ -88,20 +82,50 @@ const Game = (props) => {
         },
       ])
     );
+    console.log(squares);
+    return;
   }
 
   const [open, setOpen] = React.useState(true);
   const handleHistoryClick = () => {
     setOpen(!open);
   };
+
   const jumpTo = (step) => {
     const { setStepNumber, setXIsNext } = props;
     setStepNumber(step);
     setXIsNext(step % 2 === 0);
   };
+
+  // const History = () => {
+  //   // input: history, stepNumber
+  //   // output: a dropdown list containing jumpTo history buttons
+
+  //   const { stepNumber, history } = props;
+  //   const current = history[stepNumber];
+  //   const moves = history.map((step, move) => {
+  //     const desc = move ? "Go to move " + move : "Game Start";
+  //     return (
+  //       <div>
+  //         <List key={move}>
+  //           <Button
+  //             className={classes.button}
+  //             variant="outlined"
+  //             size="small"
+  //             fullWidth="true"
+  //             onClick={() => jumpTo(step)}
+  //           >
+  //             {desc}
+  //           </Button>
+  //         </List>
+  //       </div>
+  //     );
+  //   });
+  //   return;
+  // };
+
   const { xIsNext, stepNumber, history } = props;
   const current = history[stepNumber];
-  const winner = calculateWinner(current.squares);
   const moves = history.map((step, move) => {
     const desc = move ? "Go to move " + move : "Game Start";
     return (
@@ -110,7 +134,7 @@ const Game = (props) => {
           className={classes.button}
           variant="outlined"
           size="small"
-          fullWidth="true"
+          fullWidth={true}
           onClick={() => jumpTo(move)}
         >
           {desc}
@@ -119,19 +143,21 @@ const Game = (props) => {
     );
   });
 
-  if (winner) {
-    statusBackup = winner + " Wins!";
-  } else {
-    statusBackup = (xIsNext ? "X" : "O") + "'s Turn";
-  }
-
-  // let status;
-
-  // status = useSelector((state) => state.status);
-
-  // useEffect(() => {});
-
-  // const { status } = useSelector((state) => state.status);
+  const Status = () => {
+    const winner = calculateWinner(current.squares);
+    if (winner === "Draw") {
+      currentStatus = "It's a Draw! Refresh to Play Again";
+    } else if (winner) {
+      currentStatus = winner + " Wins! Refresh to Play Again";
+    } else {
+      currentStatus = (xIsNext ? "X" : "O") + "'s Turn";
+    }
+    return (
+      <div>
+        <Typography variant={"h4"}>{currentStatus}</Typography>
+      </div>
+    );
+  };
 
   return (
     <Fragment>
@@ -143,12 +169,12 @@ const Game = (props) => {
         justify="flex-start"
       >
         <Grid item xs={12}>
-          <Typography variant={"h4"}>{statusBackup}</Typography>
-          {/* <Typography variant={"h4"}>{status}</Typography> */}
+          <Status />
         </Grid>
         <Grid item xs={12}>
           <Board squares={current.squares} onClick={(i) => handleClick(i)} />
         </Grid>
+        {/* <History /> */}
         <ListItem button onClick={handleHistoryClick}>
           {open ? <ExpandLess /> : <ExpandMore />}
           <ListItemText align="center" primary="History" />
