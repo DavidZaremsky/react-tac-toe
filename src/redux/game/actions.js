@@ -1,22 +1,29 @@
-import * as types from './types';
+import * as types from "./types";
 
-export const setXIsNext = value => dispatch => {
+export const setXIsNext = (value) => (dispatch) => {
   dispatch({
     type: types.SET_X_IS_NEXT,
-    value
+    value,
   });
-}
+};
 
-export const setStepNumber = value => dispatch => {
+export const setStepNumber = (value) => (dispatch) => {
   dispatch({
     type: types.SET_STEP_NUMBER,
-    value
+    value,
   });
-}
+};
 
-export const setHistory = history => dispatch => {
+export const setHistory = (history) => (dispatch) => {
   dispatch({
     type: types.SET_HISTORY,
-    history
+    history,
   });
-}
+};
+
+export const setStatus = (history) => (dispatch) => {
+  dispatch({
+    type: types.SET_HISTORY,
+    history,
+  });
+};
